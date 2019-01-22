@@ -38,5 +38,6 @@ public class ReminderTasks {
 
     private static void incrementWaterCount(Context context) {
         PreferenceUtilities.incrementWaterCount(context);
+        NotificationUtils.clearAllNotification(context);
     }
 }

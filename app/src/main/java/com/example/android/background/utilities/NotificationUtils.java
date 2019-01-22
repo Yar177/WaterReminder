@@ -15,6 +15,8 @@ import android.support.v4.content.ContextCompat;
 
 import com.example.android.background.MainActivity;
 import com.example.android.background.R;
+import com.example.android.background.sync.ReminderTasks;
+import com.example.android.background.sync.WaterReminderIntentService;
 
 /**
  * Utility class for creating hydration notifications
@@ -23,6 +25,9 @@ public class NotificationUtils {
     private static final int WATER_REMINDER_PENDING_INTENT_ID = 3417;
     private static final int WATER_REMINDER_NOTIFICATION_ID = 1138;
     private static final String WATER_REMINDER_NOTIFICATION_CHANEL_ID = "reminder-notification-channel";
+
+    private static final int ACTION_DRINK_PENDING_INTENT_ID = 1;
+    private static final int ACTION_IGNORE_PENDING_INTENT_ID = 14;
 
 
     public static  void clearAllNotification(Context context){
@@ -65,8 +70,26 @@ public class NotificationUtils {
                 Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
             notificationBuilder.setPriority(NotificationCompat.PRIORITY_HIGH);
         }
-
         notificationManager.notify(WATER_REMINDER_NOTIFICATION_ID, notificationBuilder.build());
+    }
+
+
+    private static NotificationCompat.Action ignoreEwminderAction(Context context){
+        Intent ignoreReminderIntent = new Intent(context, WaterReminderIntentService.class);
+
+        ignoreReminderIntent.setAction(ReminderTasks.ACTION_DISMISS_NOTIFICATION);
+        PendingIntent ignoreReminderPendingIntent = PendingIntent.getService(
+                context,
+                ACTION_IGNORE_PENDING_INTENT_ID,
+                ignoreReminderIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
+        NotificationCompat.Action ignoreReminderAction = new NotificationCompat.Action(R.drawable.ic_cancel_black_24px
+        , "No, Thanks",
+                ignoreReminderPendingIntent);
+
+        return ignoreReminderAction;
 
 
     }
