@@ -53,9 +53,9 @@ public class NotificationUtils {
 
 
         NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(context, WATER_REMINDER_NOTIFICATION_CHANEL_ID)
+                new NotificationCompat.Builder(context , WATER_REMINDER_NOTIFICATION_CHANEL_ID)
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                .setSmallIcon(android.R.drawable.ic_btn_speak_now)
+                .setSmallIcon(R.drawable.ic_drink_notification)
                 .setLargeIcon(largeIcon(context))
                 .setContentTitle(context.getString(R.string.charging_reminder_notification_title ))
                 .setContentText(context.getString(R.string.charging_reminder_notification_body))
