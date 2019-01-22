@@ -64,7 +64,9 @@ public class NotificationUtils {
                 ))
                 .setDefaults(Notification.DEFAULT_VIBRATE)
                 .setContentIntent(contentIntent(context))
-                .setAutoCancel(true);
+                .setAutoCancel(true)
+                .addAction(drinkWaterAction(context))
+                .addAction(ignoreReminderAction(context));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
                 Build.VERSION.SDK_INT < Build.VERSION_CODES.O){
@@ -74,7 +76,7 @@ public class NotificationUtils {
     }
 
 
-    private static NotificationCompat.Action ignoreEwminderAction(Context context){
+    private static NotificationCompat.Action ignoreReminderAction(Context context){
         Intent ignoreReminderIntent = new Intent(context, WaterReminderIntentService.class);
 
         ignoreReminderIntent.setAction(ReminderTasks.ACTION_DISMISS_NOTIFICATION);
@@ -90,8 +92,26 @@ public class NotificationUtils {
                 ignoreReminderPendingIntent);
 
         return ignoreReminderAction;
+    }
 
 
+
+    private static NotificationCompat.Action drinkWaterAction(Context context){
+        Intent incrementWaterCountIntent = new Intent(context, WaterReminderIntentService.class);
+
+        incrementWaterCountIntent.setAction(ReminderTasks.ACTION_INCREMENT_WATER_COUNT);
+        PendingIntent incrementWaterCountPendingIntent = PendingIntent.getService(
+                context,
+                ACTION_DRINK_PENDING_INTENT_ID,
+                incrementWaterCountIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
+        NotificationCompat.Action drinkWaterAction = new NotificationCompat.Action(R.drawable.ic_local_drink_black_24px
+                , "I did it!",
+                incrementWaterCountPendingIntent);
+
+        return drinkWaterAction;
     }
 
 
