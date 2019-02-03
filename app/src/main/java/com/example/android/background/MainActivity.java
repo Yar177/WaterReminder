@@ -16,6 +16,7 @@
 package com.example.android.background;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.background.sync.ReminderTasks;
+import com.example.android.background.sync.ReminderUtilities;
 import com.example.android.background.sync.WaterReminderIntentService;
 import com.example.android.background.utilities.NotificationUtils;
 import com.example.android.background.utilities.PreferenceUtilities;
@@ -36,6 +38,8 @@ public class MainActivity extends AppCompatActivity implements
     private TextView mWaterCountDisplay;
     private TextView mChargingCountDisplay;
     private ImageView mChargingImageView;
+
+    IntentFilter mChargingIntentFilter;
 
     private Toast mToast;
 
@@ -53,9 +57,16 @@ public class MainActivity extends AppCompatActivity implements
         updateWaterCount();
         updateChargingReminderCount();
 
+        ReminderUtilities.scheduleChargingReminder(this);
+
         /** Setup the shared preference listener **/
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
+
+        mChargingIntentFilter = new IntentFilter();
+        mChargingIntentFilter.addAction(Intent.ACTION_POWER_CONNECTED);
+        mChargingIntentFilter.addAction(Intent.ACTION_POWER_DISCONNECTED);
+
     }
 
     /**
@@ -75,6 +86,14 @@ public class MainActivity extends AppCompatActivity implements
                 R.plurals.charge_notification_count, chargingReminders, chargingReminders);
         mChargingCountDisplay.setText(formattedChargingReminders);
 
+    }
+
+    private void showChargin(boolean isCharging){
+        if (isCharging){
+            mChargingImageView.setImageResource(R.drawable.ic_power_pink_80px);
+        }else {
+            mChargingImageView.setImageResource(R.drawable.ic_power_grey_80px);
+        }
     }
 
     /**
