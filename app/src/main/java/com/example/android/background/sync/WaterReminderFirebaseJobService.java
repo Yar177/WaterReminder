@@ -1,9 +1,12 @@
 package com.example.android.background.sync;
 
-import android.app.job.JobParameters;
-import android.app.job.JobService;
 import android.content.Context;
 import android.os.AsyncTask;
+
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.JobParameters;
+import com.firebase.jobdispatcher.JobService;
+import com.firebase.jobdispatcher.RetryStrategy;
 
 public class WaterReminderFirebaseJobService extends JobService{
 
@@ -20,7 +23,7 @@ public class WaterReminderFirebaseJobService extends JobService{
 
 
                 return null;
-            }
+             }
 
             @Override
             protected void onPostExecute(Object o){
@@ -28,11 +31,13 @@ public class WaterReminderFirebaseJobService extends JobService{
 
             }
         };
-        return false;
+        mBackgroundTask.execute();
+        return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters params) {
-        return false;
+        if (mBackgroundTask != null) mBackgroundTask.cancel(true);
+        return true;
     }
 }
