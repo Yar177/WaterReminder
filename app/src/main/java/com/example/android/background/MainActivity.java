@@ -15,6 +15,8 @@
  */
 package com.example.android.background;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements
     private TextView mWaterCountDisplay;
     private TextView mChargingCountDisplay;
     private ImageView mChargingImageView;
+    ChargingBroadcastReceiver mChargingReceiver;
 
     IntentFilter mChargingIntentFilter;
 
@@ -67,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements
         mChargingIntentFilter.addAction(Intent.ACTION_POWER_CONNECTED);
         mChargingIntentFilter.addAction(Intent.ACTION_POWER_DISCONNECTED);
 
+        mChargingReceiver = new ChargingBroadcastReceiver();
+
     }
 
     /**
@@ -75,6 +80,20 @@ public class MainActivity extends AppCompatActivity implements
     private void updateWaterCount() {
         int waterCount = PreferenceUtilities.getWaterCount(this);
         mWaterCountDisplay.setText(waterCount+"");
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mChargingReceiver, mChargingIntentFilter);
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mChargingReceiver);
     }
 
     /**
@@ -134,4 +153,16 @@ public class MainActivity extends AppCompatActivity implements
     public void testNotification(View view) {
         NotificationUtils.remindUserBecauseCharging(this);
     }
+
+
+    private class ChargingBroadcastReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            boolean isCharging = (action.equals(Intent.ACTION_POWER_CONNECTED));
+            showChargin(isCharging);
+        }
+    }
+
+
 }
